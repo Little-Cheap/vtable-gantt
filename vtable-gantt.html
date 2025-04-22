@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>甘特图</title>
+    <!-- <script src="vtable.min.js"></script> -->
+    <!-- <script src="vtable-editors.min.js"></script> -->
+    <script src="vtable-gantt.min.js"></script>
+    <script src="vtable-gantt.js"></script>
+    <style>
+      #editModal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000; /* 确保模态框在最上层 */
+      }
+
+      /* 新增项目模态框样式 */
+      #addModal {
+        display: none; /* 默认隐藏 */
+        position: fixed; /* 固定定位 */
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%); /* 居中显示 */
+        width: 350px;
+        padding: 20px;
+        background-color: #fefefe;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        z-index: 1000; /* 确保在顶层 */
+      }
+      #addModal h2 {
+        margin-top: 0;
+        text-align: center;
+      }
+      #addModal div {
+        margin-bottom: 15px;
+      }
+      #addModal label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      #addModal input[type="text"],
+      #addModal input[type="datetime-local"] {
+        width: calc(100% - 12px); /* 减去 padding */
+        padding: 6px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      #addButtonContainer {
+        text-align: right;
+        margin-top: 20px;
+      }
+      #addButtonContainer button {
+        padding: 8px 15px;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+      #addButtonContainer button:first-child {
+        background-color: #63bb5c;
+        color: white;
+        border: none;
+      }
+      #addButtonContainer button:last-child {
+        background-color: #ccc;
+        color: #333;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="addProcessBtn" style="margin: 10px">新增工序</button>
+    <div
+      id="tableContainer"
+      style="position: absolute; width: 100%; height: 400px"
+    ></div>
+
+    <!-- 新增项目模态框 -->
+    <div id="addModal" class="modal">
+      <h2>新增工序</h2>
+      <div>
+        <label>工序名称：</label>
+        <input type="text" id="addProcessName" />
+      </div>
+      <div>
+        <label>计划开始：</label>
+        <input type="datetime-local" id="addStartDate" />
+      </div>
+      <div>
+        <label>计划结束：</label>
+        <input type="datetime-local" id="addEndDate" />
+      </div>
+      <div>
+        <label>工序类别：</label>
+        <select id="addProcessType" style="width: calc(100% - 12px); padding: 6px; border: 1px solid #ccc; box-sizing: border-box;">
+          <option value="计划工序">计划工序</option>
+          <option value="实绩工序">实绩工序</option>
+          <!-- 可以根据需要添加更多选项 -->
+        </select>
+      </div>
+      <div id="addButtonContainer">
+        <button id="saveNewProcessBtn">保存</button>
+        <!-- Removed onclick, added id -->
+        <button id="cancelAddModalBtn">取消</button>
+        <!-- Removed onclick, added id -->
+      </div>
+    </div>
+  </body>
+</html>
