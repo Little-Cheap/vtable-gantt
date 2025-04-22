@@ -24,6 +24,9 @@ window.onload = function () {
 
   // 显示提示框的函数
   function showTooltip(infoList, x, y) {
+    // 如果已存在弹出框，先移除
+    hideTooltip();
+
     popup.innerHTML = "";
     popup.id = "popup";
     popup.style.left = x + "px";
@@ -35,9 +38,10 @@ window.onload = function () {
     // 定义要显示的字段及其中文标签
     const keys = {
       processName: "工序名称",
-      startDate: "计划开始",
-      endDate: "计划结束",
-      pocessType: "工序类别", // 添加工序类别
+      startDate: "开始时间",
+      endDate: "结束时间",
+      pocessType: "工序类别",
+      duration: "时长(小时)"
     };
     // 创建input表单
     const form = document.createElement("form");
@@ -55,7 +59,7 @@ window.onload = function () {
     nameInput.id = "popupProjectName";
     form.appendChild(nameLabel);
     form.appendChild(nameInput);
-    // 计划开始
+    // 开始时间
     const startLabel = document.createElement("label");
     startLabel.textContent = keys.startDate + ":";
     startLabel.style.display = "block";
@@ -71,7 +75,7 @@ window.onload = function () {
     }
     form.appendChild(startLabel);
     form.appendChild(startInput);
-    // 计划结束
+    // 结束时间
     const endLabel = document.createElement("label");
     endLabel.textContent = keys.endDate + ":";
     endLabel.style.display = "block";
@@ -114,7 +118,7 @@ window.onload = function () {
     }
     form.appendChild(typeLabel);
     form.appendChild(typeSelect);
-
+    
     popup.appendChild(form);
     // 按钮容器
     const btnContainer = document.createElement("div");
@@ -137,12 +141,24 @@ window.onload = function () {
       const newName = nameInput.value;
       const newStart = startInput.value.replace("T", " ");
       const newEnd = endInput.value.replace("T", " ");
-      const newType = typeSelect.value; // 获取工序类别的值
+      const newType = typeSelect.value;
+
+      // 在保存时计算时长
+      let calculatedDuration = null;
+      if (startInput.value && endInput.value) {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+        if (!isNaN(start) && !isNaN(end) && end >= start) {
+          calculatedDuration = ((end - start) / (1000 * 60 * 60)).toFixed(1);
+        }
+      }
+
       // 直接修改传入的 taskRecord (即 infoList)
       infoList.processName = newName;
       infoList.startDate = newStart;
       infoList.endDate = newEnd;
-      infoList.pocessType = newType; // 更新工序类别
+      infoList.pocessType = newType;
+      infoList.duration = calculatedDuration; // 使用计算出的时长
       // 更新甘特图时，使用当前的 window.records 数据源
       if (window.ganttInstance && window.ganttInstance.setRecords) {
         // 这里是关键修改：使用 window.records 而不是旧的 records
@@ -167,18 +183,17 @@ window.onload = function () {
     btnContainer.appendChild(saveBtn);
     btnContainer.appendChild(cancelBtn);
     popup.appendChild(btnContainer);
-    popup.onmouseenter = function () {
-      isMouseOnPopup = true;
-    };
-    popup.onmouseleave = function () {
-      isMouseOnPopup = false;
-      setTimeout(() => {
-        if (!isMouseOnTaskBar && !isMouseOnPopup) {
-          hideTooltip();
-        }
-      }, 50);
-    };
+
     document.body.appendChild(popup);
+
+    // 添加一次性点击外部区域隐藏的监听器
+    // 使用 setTimeout 确保当前点击事件处理完毕后再添加监听器
+    setTimeout(() => {
+      document.addEventListener("click", handleClickOutside, {
+        capture: true,
+        once: true,
+      });
+    }, 0);
   }
 
   // 隐藏提示框的函数
@@ -186,8 +201,18 @@ window.onload = function () {
     if (document.body.contains(popup)) {
       document.body.removeChild(popup);
     }
-    isMouseOnTaskBar = false;
-    isMouseOnPopup = false;
+    // 移除可能存在的外部点击监听器，防止内存泄漏
+    document.removeEventListener("click", handleClickOutside, {
+      capture: true,
+    });
+  }
+
+  // 处理点击外部区域的函数
+  function handleClickOutside(event) {
+    // 检查点击事件的目标是否在 popup 内部
+    if (popup && !popup.contains(event.target)) {
+      hideTooltip();
+    }
   }
 
   // 自定义工序条布局函数
@@ -212,25 +237,18 @@ window.onload = function () {
       boundsPadding: 10,
     });
     container.add(name);
-    container.addEventListener("mouseenter", (event) => {
-      isMouseOnTaskBar = true;
-      const container = document.getElementById("tableContainer");
-      const containerRect = container.getBoundingClientRect();
+
+    // 添加 click 事件监听器
+    container.addEventListener("click", (event) => {
+      // 阻止事件冒泡，防止触发 handleClickOutside
+      event.stopPropagation();
+      const containerElement = document.getElementById("tableContainer");
+      const containerRect = containerElement.getBoundingClientRect();
       const targetY = event.target.globalAABBBounds.y2;
+      // 使用 event.client.x 和计算出的 Y 坐标显示 tooltip
       showTooltip(taskRecord, event.client.x, targetY + containerRect.top);
-      // 保持高亮
-      if (container.setState) container.setState({ hover: true });
     });
-    container.addEventListener("mouseleave", () => {
-      isMouseOnTaskBar = false;
-      setTimeout(() => {
-        if (!isMouseOnTaskBar && !isMouseOnPopup) {
-          hideTooltip();
-          // 恢复原色
-          if (container.setState) container.setState({ hover: false });
-        }
-      }, 50);
-    });
+
     return {
       rootContainer: container,
     };
@@ -245,6 +263,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-21 12:30",
+      duration: "5.0",
       priority: "P0",
     },
     {
@@ -254,6 +273,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-21 12:30",
+      duration: "5.0",
       priority: "P0",
     },
     {
@@ -263,6 +283,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-02 12:30",
       endDate: "2025-04-23 12:30",
+      duration: "16.0",
       priority: "P0",
     },
     {
@@ -272,6 +293,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-02 12:30",
       endDate: "2025-04-23 12:30",
+      duration: "16.0",
       priority: "P0",
     },
     {
@@ -281,6 +303,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-03-16 12:30",
       endDate: "2025-04-16 12:30",
+      duration: "16.0",
       priority: "P1",
     },
     {
@@ -290,6 +313,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-03-16 12:30",
       endDate: "2025-04-16 12:30",
+      duration: "16.0",
       priority: "P1",
     },
     {
@@ -299,6 +323,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-16 12:30",
       endDate: "2025-05-16 12:30",
+      duration: "16.0",
       priority: "P0",
     },
     {
@@ -308,6 +333,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-16 12:30",
       endDate: "2025-05-16 12:30",
+      duration: "16.0",
       priority: "P0",
     },
     {
@@ -317,6 +343,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-15 12:30",
       endDate: "2025-04-29 12:30",
+      duration: "16.0",
       priority: "P0",
     },
     {
@@ -326,6 +353,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-15 12:30",
       endDate: "2025-04-29 12:30",
+      duration: "16.0",
       priority: "P0",
     },
     {
@@ -335,6 +363,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-16 12:30",
+      duration: "1.0",
       priority: "P1",
     },
     {
@@ -344,6 +373,7 @@ window.onload = function () {
       developer: "liufangfang.jane@bytedance.com",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-16 12:30",
+      duration: "1.0",
       priority: "P1",
     },
   ];
@@ -367,20 +397,16 @@ window.onload = function () {
         textAlign: "center",
       },
     },
-    // {
-    //   field: "startDate",
-    //   title: "开始时间",
-    //   width: "auto",
-    //   sort: false,
-    //   editor: "date-input",
-    // },
-    // {
-    //   field: "endDate",
-    //   title: "结束时间",
-    //   width: "auto",
-    //   sort: false,
-    //   editor: "date-input",
-    // },
+    {
+      field: "duration",
+      title: "时长(小时)",
+      width: "auto",
+      sort: false,
+      style: {
+        // 添加样式配置
+        textAlign: "center",
+      },
+    },
   ];
 
   // 工序条表头星期
