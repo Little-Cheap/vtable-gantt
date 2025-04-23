@@ -40,7 +40,7 @@ window.onload = function () {
       processName: "工序名称",
       startDate: "开始时间",
       endDate: "结束时间",
-      pocessType: "工序类别",
+      processType: "工序类别",
       duration: "时长(小时)"
     };
     // 创建input表单
@@ -93,7 +93,7 @@ window.onload = function () {
 
     // 工序类别
     const typeLabel = document.createElement("label");
-    typeLabel.textContent = keys.pocessType + ":";
+    typeLabel.textContent = keys.processType + ":";
     typeLabel.style.display = "block";
     typeLabel.style.marginTop = "8px";
     const typeSelect = document.createElement("select");
@@ -113,8 +113,8 @@ window.onload = function () {
     typeSelect.appendChild(optionPlan);
     typeSelect.appendChild(optionActual);
     // 设置默认选中
-    if (infoList.pocessType) {
-      typeSelect.value = infoList.pocessType;
+    if (infoList.processType) {
+      typeSelect.value = infoList.processType;
     }
     form.appendChild(typeLabel);
     form.appendChild(typeSelect);
@@ -157,7 +157,7 @@ window.onload = function () {
       infoList.processName = newName;
       infoList.startDate = newStart;
       infoList.endDate = newEnd;
-      infoList.pocessType = newType;
+      infoList.processType = newType;
       infoList.duration = calculatedDuration; // 使用计算出的时长
       // 更新甘特图时，使用当前的 window.records 数据源
       if (window.ganttInstance && window.ganttInstance.setRecords) {
@@ -257,124 +257,112 @@ window.onload = function () {
   // 数据
   const records = [
     {
-      id: 1,
+      orderNumber: 1,
       processName: "安全交底三方确认停机挂牌",
-      pocessType: "实绩工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "实绩工序",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-21 12:30",
       duration: "5.0",
-      priority: "P0",
+      internalCode: "1",
     },
     {
-      id: 2,
+      orderNumber: 2,
       processName: "安全交底三方确认停机挂牌",
-      pocessType: "计划工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "计划工序",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-21 12:30",
       duration: "5.0",
-      priority: "P0",
+      internalCode: "2",
     },
     {
-      id: 3,
+      orderNumber: 3,
       processName: "本体介质软曾电缆烧嘴拆除",
-      pocessType: "实绩工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "实绩工序",
       startDate: "2025-04-02 12:30",
       endDate: "2025-04-23 12:30",
       duration: "16.0",
-      priority: "P0",
+      internalCode: "3",
     },
     {
-      id: 4,
+      orderNumber: 4,
       processName: "本体介质软曾电缆烧嘴拆除",
-      pocessType: "计划工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "计划工序",
       startDate: "2025-04-02 12:30",
       endDate: "2025-04-23 12:30",
       duration: "16.0",
-      priority: "P0",
+      internalCode: "4",
     },
     {
-      id: 5,
+      orderNumber: 5,
       processName: "水平定尺杆、浮动气缸拆除",
-      pocessType: "实绩工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "实绩工序",
       startDate: "2025-03-16 12:30",
       endDate: "2025-04-16 12:30",
       duration: "16.0",
-      priority: "P1",
+      internalCode: "5",
     },
     {
-      id: 6,
+      orderNumber: 6,
       processName: "水平定尺杆、浮动气缸拆除",
-      pocessType: "计划工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "计划工序",
       startDate: "2025-03-16 12:30",
       endDate: "2025-04-16 12:30",
       duration: "16.0",
-      priority: "P1",
+      internalCode: "6",
     },
     {
-      id: 7,
+      orderNumber: 7,
       processName: "高压水管拆除、地沟盖板吊出",
-      pocessType: "实绩工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "实绩工序",
       startDate: "2025-04-16 12:30",
       endDate: "2025-05-16 12:30",
       duration: "16.0",
-      priority: "P0",
+      internalCode: "7",
     },
     {
-      id: 8,
+      orderNumber: 8,
       processName: "高压水管拆除、地沟盖板吊出",
-      pocessType: "计划工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "计划工序",
       startDate: "2025-04-16 12:30",
       endDate: "2025-05-16 12:30",
       duration: "16.0",
-      priority: "P0",
+      internalCode: "8",
     },
     {
-      id: 9,
+      orderNumber: 9,
       processName: "火清机本体移出密朗室",
-      pocessType: "实绩工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "实绩工序",
       startDate: "2025-04-15 12:30",
       endDate: "2025-04-29 12:30",
       duration: "16.0",
-      priority: "P0",
+      internalCode: "9",
     },
     {
-      id: 10,
+      orderNumber: 10,
       processName: "火清机本体移出密朗室",
-      pocessType: "计划工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "计划工序",
       startDate: "2025-04-15 12:30",
       endDate: "2025-04-29 12:30",
       duration: "16.0",
-      priority: "P0",
+      internalCode: "10",
     },
     {
-      id: 11,
+      orderNumber: 11,
       processName: "火清机本体解体昂出外运",
-      pocessType: "实绩工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "实绩工序",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-16 12:30",
       duration: "1.0",
-      priority: "P1",
+      internalCode: "11",
     },
     {
-      id: 12,
+      orderNumber: 12,
       processName: "火清机本体解体昂出外运",
-      pocessType: "计划工序",
-      developer: "liufangfang.jane@bytedance.com",
+      processType: "计划工序",
       startDate: "2025-04-16 12:30",
       endDate: "2025-04-16 12:30",
       duration: "1.0",
-      priority: "P1",
+      internalCode: "12",
     },
   ];
 
@@ -388,7 +376,7 @@ window.onload = function () {
       mergeCell: true,
     },
     {
-      field: "pocessType",
+      field: "processType",
       title: "工序类别",
       width: "auto",
       sort: false,
@@ -837,7 +825,7 @@ window.onload = function () {
             // Filter out the record
             const currentRecords = window.records || [];
             const newRecords = currentRecords.filter(
-              (record) => record.id !== recordToDeleteId
+              (record) => record.orderNumber !== recordToDeleteId
             );
 
             // Update the Gantt chart data
@@ -879,12 +867,12 @@ window.onload = function () {
       e.preventDefault();
     });
 
-    if (!params.record || params.record.id === undefined) {
+    if (!params.record || params.record.orderNumber === undefined) {
       console.error("无法获取右键点击的工序记录或记录缺少 ID。");
       return;
     }
 
-    recordToDeleteId = params.record.id; // Store the ID of the record to be deleted
+    recordToDeleteId = params.record.orderNumber; // Store the ID of the record to be deleted
 
     const menu = getOrCreateContextMenu();
     menu.style.left = `${params.event.clientX}px`;
@@ -947,7 +935,7 @@ window.onload = function () {
   // 保存新项目
   function saveNewProcess() {
     const projectName = document.getElementById("addProcessName").value;
-    const pocessType = document.getElementById("addProcessType").value; // 获取工序类别
+    const processType = document.getElementById("addProcessType").value; // 获取工序类别
     const startDate = document.getElementById("addStartDate").value;
     const endDate = document.getElementById("addEndDate").value;
 
@@ -956,17 +944,28 @@ window.onload = function () {
       return;
     }
 
+    // 计算时长（小时），保留一位小数
+    let duration = null;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (!isNaN(start) && !isNaN(end) && end >= start) {
+        duration = ((end - start) / (1000 * 60 * 60)).toFixed(1);
+      }
+    }
+
     // 将 datetime-local 格式转换为 VTable-Gantt 需要的格式 (YYYY-MM-DD HH:MM)
     const formattedStartDate = startDate.replace("T", " ");
     const formattedEndDate = endDate.replace("T", " ");
 
-    // 创建新项目对象 (注意：这里的 id 和 parentId 需要根据实际逻辑生成或设置)
+    // 创建新项目对象 (注意：这里的 orderNumber 和 parentId 需要根据实际逻辑生成或设置)
     const newProject = {
-      id: Date.now().toString(), // 临时使用时间戳作为 ID
+      orderNumber: Date.now().toString(), // 临时使用时间戳作为 orderNumber
       processName: projectName,
       startDate: formattedStartDate,
       endDate: formattedEndDate,
-      pocessType: pocessType, // 使用从下拉框获取的值
+      processType: processType, // 使用从下拉框获取的值
+      duration: duration, // 添加计算出的时长
       developer: "默认开发者", // 默认值
       priority: "P0", // 默认优先级
       // parentId: null, // 根据需要设置父工序ID
